@@ -1,5 +1,4 @@
 ** SINGLE SHOT DETECTION
-** Take home Assignment Solution
 
 ** Source code to the problem is in google colab.(link shared in the mail)
 
