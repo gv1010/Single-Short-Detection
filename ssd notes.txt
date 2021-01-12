@@ -1,0 +1,44 @@
+SSD
+
+-- Faster than Yolo and as accurate as RCNN
+
+-- Yolo not able to capture scale variant, smaller objects are not detected
+-- SSD detetcions at multiple scales
+-- N+1 class, extra class is no object class
+
+-- Huge no of default boxes 
+-- For each default boxes i, and j ground truth boxes,
+   The ith default box is matched to jth ground truth box using Jaccard Index that is IOU, if IOU > 0.5, xij = 1 else xij = 0
+
+-- Training:
+for every default box d we calculate predicited box b with 4 parameters cx,cy, w, h
+Every box also conatins class scores, for p classes we have total  p +4 parameters
+let a feature map be mXn so total number of parameters detector gives (p+4)*m.n*#default boxes.
+
+
+--Loss function
+  confidence loss, location loss
+  we have to maximize the matched predictions and minimize the confidence of remaining predictions.
+  
+-- Hard neg mining.
+  Number of negative samples will be much greater than positive samples, sort the negative samples sing confidnce score for each default box, pick the top ones to keep the ratio of neg to pos to atmost 3:1
+  
+  
+-- Choosing sclaes:
+   let be m feature maps 
+   Sk be scale at kth map(in each map scale of bounding box is fixed)
+   Smin= 0.2 Smax = 0.9
+   Sk = Smin + (Smax-Smin)* (k-1)/(m-1) 
+   Aspect Ratios:
+   [1, 2, 3, 1/2, 1/3]
+   for aspect ratio 1 we add another box having scale sqrt(Sk.Sk+1)
+   so total we have 6 default boxes
+   
+-- Non Max Supression:
+   2 different scale can detect same object, same feature postions can detect objects, 2 aspect ratios can also detect objects.
+   1. Sort all boxes of a class using confidence scores.
+   2. Cal. Jaccard Index of first box with every other box
+		- if overlap > 0.45 remove the other box
+		- otherwise keep the other box
+   3. Repeat the above process for each box in the sorted order
+   
